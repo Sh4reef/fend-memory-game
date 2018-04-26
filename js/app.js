@@ -78,13 +78,22 @@
    */
 
   const counterElement = document.getElementById('counter');
+  const rates = document.getElementsByClassName('fa-star');
   const resetElement = document.getElementById('reset');
+  const timerElement = document.getElementById('timer');
   let cardsElements = document.querySelectorAll('.card');
   let openedCards = [];
   let matchedCards = 0;
+  let someCardOpened = false;
+  let timer = 1;
+  let startTimer;
 
   // reset the game
   resetElement.addEventListener('click', function (event) {
+    restartGame()
+  });
+
+  const restartGame = function () {
     matchedCards = 0;
     openedCards = [];
     counterElement.innerText = '0';
@@ -92,14 +101,25 @@
     while (deck.hasChildNodes()) {
       deck.removeChild(deck.lastChild)
     }
+    // reset everything
+    timer = 0;
+    clearInterval(startTimer);
+    timerElement.innerText = '0';
+    someCardOpened = false;
+    // reset the stars
+    const rateStars = document.querySelectorAll('.fa-star-o')
+    if (rateStars.length > 0) {
+      rateStars.forEach(function (r) {
+        r.className = 'fa fa-star'
+      })
+    }
     renderCards();
     cardsElements = document.querySelectorAll('.card');
     runCardListener()
-  });
+  };
 
   const showIcon = function (node) {
     node.className = 'card open show'
-    // node.cssRules()
   };
 
   const openCard = function (node) {
@@ -110,7 +130,9 @@
     openedCards.forEach(function (card) {
       card.className = 'card match animated tada'
     });
-    openedCards = []
+    setTimeout(function () {
+      openedCards = []
+    }, 1200)
   };
 
   const notmath = function () {
@@ -118,10 +140,10 @@
       card.className = 'card nomatch animated shake';
       setTimeout(function () {
         card.className = 'card';
+        openedCards = []
         cardListener(card)
       }, 1200)
     });
-    openedCards = []
   };
 
   // check if the two cards match
@@ -139,18 +161,48 @@
 
   const countMoves = function () {
     counterElement.innerText++
+    switch (Number(counterElement.innerText)) {
+      case 20:
+        rates[2].className = 'fa fa-star-o';
+        break;
+      case 25:
+        rates[1].className = 'fa fa-star-o';
+        break;
+      default:
+    }
   };
 
   const finalCheck = function () {
     if (matchedCards === 8) {
+      clearInterval(startTimer)
       setTimeout(function () {
-        alert(`Your final score is : ${(matchedCards * 1000 / counterElement.innerText).toFixed(2)}`)
+        const result = confirm(`
+          Your final score is : ${(matchedCards * 1000 / counterElement.innerText).toFixed(2)}
+          Your rate is : ${rates.length} stars
+          You won the game in : ${timer} sec
+          Play again ?
+        `)
+        if (result) {
+          restartGame()
+        } else {
+          return
+        }
       }, 1000)
     }
   }
-  
+
   const cardListener = function (card) {
-    card.addEventListener('click', function () {
+    card.addEventListener('click', function (event) {
+      // if openedCards is equal to 2 then stop opening cards until it finish from checking cards match.
+      if (openedCards.length === 2) {
+         return cardListener(card)
+      }
+      if (!someCardOpened) {
+        someCardOpened = !someCardOpened
+        startTimer = setInterval(function () {
+          timerElement.innerText = `${timer++} sec`
+        }, 1000)
+      }
       showIcon(this);
       openCard(this);
       checkCard(this);
@@ -163,7 +215,6 @@
       cardListener(card)
     })
   };
-
   runCardListener()
 
 })();
