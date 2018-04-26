@@ -19,16 +19,16 @@
 
   // generate cards depends on icons above
   const cardsGenerator = function (numOfMatch = 8) {
-    const cards = []
+    const cards = [];
     for (let i = 0; i < numOfMatch; i++) {
       const newCard = document.createElement('li');
       newCard.className = 'card animated flipInX';
       const icon = document.createElement('i');
       icon.className = icons[i];
       newCard.appendChild(icon);
-      cards.push(newCard)
+      cards.push(newCard);
     }
-    return cards
+    return cards;
   };
 
 
@@ -59,10 +59,10 @@
   const renderCards = function () {
     for (let i = 0; i < 2; i++) {
       shuffle(cardsGenerator()).forEach(function (card) {
-        deck.appendChild(card)
-      })
+        deck.appendChild(card);
+      });
     }
-  }
+  };
 
   renderCards();
 
@@ -90,7 +90,7 @@
 
   // reset the game
   resetElement.addEventListener('click', function (event) {
-    restartGame()
+    restartGame();
   });
 
   const restartGame = function () {
@@ -99,7 +99,7 @@
     counterElement.innerText = '0';
     // remove all the child nodes
     while (deck.hasChildNodes()) {
-      deck.removeChild(deck.lastChild)
+      deck.removeChild(deck.lastChild);
     }
     // reset everything
     timer = 0;
@@ -107,32 +107,32 @@
     timerElement.innerText = '0';
     someCardOpened = false;
     // reset the stars
-    const rateStars = document.querySelectorAll('.fa-star-o')
+    const rateStars = document.querySelectorAll('.fa-star-o');
     if (rateStars.length > 0) {
       rateStars.forEach(function (r) {
-        r.className = 'fa fa-star'
-      })
+        r.className = 'fa fa-star';
+      });
     }
     renderCards();
     cardsElements = document.querySelectorAll('.card');
-    runCardListener()
+    runCardListener();
   };
 
   const showIcon = function (node) {
-    node.className = 'card open show'
+    node.className = 'card open show';
   };
 
   const openCard = function (node) {
-    openedCards.push(node)
+    openedCards.push(node);
   };
 
   const match = function () {
     openedCards.forEach(function (card) {
-      card.className = 'card match animated tada'
+      card.className = 'card match animated tada';
     });
     setTimeout(function () {
-      openedCards = []
-    }, 1200)
+      openedCards = [];
+    }, 1200);
   };
 
   const notmath = function () {
@@ -140,27 +140,27 @@
       card.className = 'card nomatch animated shake';
       setTimeout(function () {
         card.className = 'card';
-        openedCards = []
-        cardListener(card)
-      }, 1200)
+        openedCards = [];
+        cardListener(card);
+      }, 1200);
     });
   };
 
   // check if the two cards match
   const checkCard = function () {
     if (openedCards.length === 2) {
-      countMoves()
+      countMoves();
       if (openedCards[0].childNodes[0].className === openedCards[1].childNodes[0].className) {
-        match()
-        matchedCards++
+        match();
+        matchedCards++;
       } else {
-        notmath()
+        notmath();
       }
     }
   };
 
   const countMoves = function () {
-    counterElement.innerText++
+    counterElement.innerText++;
     switch (Number(counterElement.innerText)) {
       case 20:
         rates[2].className = 'fa fa-star-o';
@@ -174,47 +174,47 @@
 
   const finalCheck = function () {
     if (matchedCards === 8) {
-      clearInterval(startTimer)
+      clearInterval(startTimer);
       setTimeout(function () {
         const result = confirm(`
           Your final score is : ${(matchedCards * 1000 / counterElement.innerText).toFixed(2)}
           Your rate is : ${rates.length} stars
           You won the game in : ${timer} sec
           Play again ?
-        `)
+        `);
         if (result) {
-          restartGame()
+          restartGame();
         } else {
-          return
+          return;
         }
-      }, 1000)
+      }, 1000);
     }
-  }
+  };
 
   const cardListener = function (card) {
     card.addEventListener('click', function (event) {
       // if openedCards is equal to 2 then stop opening cards until it finish from checking cards match.
       if (openedCards.length === 2) {
-         return cardListener(card)
+        return cardListener(card);
       }
       if (!someCardOpened) {
-        someCardOpened = !someCardOpened
+        someCardOpened = !someCardOpened;
         startTimer = setInterval(function () {
-          timerElement.innerText = `${timer++} sec`
-        }, 1000)
+          timerElement.innerText = `${timer++} sec`;
+        }, 1000);
       }
       showIcon(this);
       openCard(this);
       checkCard(this);
-      finalCheck()
-    }, {once: true})
+      finalCheck();
+    }, {once: true});
   };
 
   const runCardListener = function () {
     cardsElements.forEach(function (card) {
-      cardListener(card)
-    })
+      cardListener(card);
+    });
   };
-  runCardListener()
+  runCardListener();
 
 })();
