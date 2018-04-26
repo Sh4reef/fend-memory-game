@@ -5,6 +5,7 @@
    * Create a list that holds all of your cards
    */
 
+  // icons for cards
   const icons = [
     'fa fa-diamond',
     'fa fa-paper-plane-o',
@@ -16,6 +17,7 @@
     'fa fa-bomb',
   ];
 
+  // generate cards depends on icons above
   const cardsGenerator = function (numOfMatch = 8) {
     const cards = []
     for (let i = 0; i < numOfMatch; i++) {
@@ -52,6 +54,7 @@
     return array;
   }
 
+  // shuffle twice so the total cards should be 16 then render the cards
   const deck = document.getElementById('card-list');
   const renderCards = function () {
     for (let i = 0; i < 2; i++) {
@@ -80,10 +83,12 @@
   let openedCards = [];
   let matchedCards = 0;
 
+  // reset the game
   resetElement.addEventListener('click', function (event) {
     matchedCards = 0;
     openedCards = [];
     counterElement.innerText = '0';
+    // remove all the child nodes
     while (deck.hasChildNodes()) {
       deck.removeChild(deck.lastChild)
     }
@@ -119,6 +124,7 @@
     openedCards = []
   };
 
+  // check if the two cards match
   const checkCard = function () {
     if (openedCards.length === 2) {
       countMoves()
@@ -142,7 +148,7 @@
       }, 1000)
     }
   }
-
+  
   const cardListener = function (card) {
     card.addEventListener('click', function () {
       showIcon(this);
